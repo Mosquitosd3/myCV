@@ -6,10 +6,10 @@ import com.r_style.softlub.myCV.model.User;
 import com.r_style.softlub.myCV.repository.UserRepository;
 import com.r_style.softlub.myCV.util.DtoUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,13 +17,14 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepo;
     private final DtoUtil dtoUtil;
 
+    @Cacheable(value = "users", key = "{#page, #size}")
     @Override
-    public List<UserDto> getAllUsers() {
-        return userRepo.findAll().stream()
-                .map(dtoUtil::toUserDto)
-                .collect(Collectors.toList());
+    public Page<UserDto> getAllUsers(Pageable pageable) {
+        return userRepo.findAll(pageable)
+                .map(dtoUtil::toUserDto);
     }
 
+    @Cacheable(value = "users", key = "#id")
     @Override
     public UserDto getUserById(Long id) {
         User user = userRepo.findById(id)
