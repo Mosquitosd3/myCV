@@ -31,7 +31,7 @@ public class UserController {
 
     @Operation(summary = "Create a new user")
     @PostMapping
-    public UserDto createUser(@RequestBody @Schema(example = "{\"name\":\"John\",\"email\":\"john@example.com\"}") UserDto userDto) {
+    public UserDto createUser(@Valid @RequestBody @Schema(example = "{\"name\":\"John\",\"email\":\"john@example.com\"}") UserDto userDto) {
         return userService.saveUser(userDto);
     }
 
